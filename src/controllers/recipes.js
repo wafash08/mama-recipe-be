@@ -5,10 +5,11 @@ const prisma = new PrismaClient();
 
 const getRecipes = async (req, res, next) => {
   try {
+    const listSort = ['created_at', 'title', 'updated_at']
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;
-    const sort = req.query.sort || "created_at";
-    const sortBy = req.query.sortBy || "DESC";
+    const sort =  listSort.includes(req.query.sort) ? req.query.sort : 'created_at'
+    const sortBy = req.query.sortBy || "desc";
     const search = req.query.search || "";
     const offset = (page - 1) * limit;
 
@@ -19,8 +20,7 @@ const getRecipes = async (req, res, next) => {
             title:{
                 contains: search
             }
-        }}:{})
-        
+        }}:{}),      
     });
     response(res, recipes, 200, "get all recipe success");
   } catch (error) {

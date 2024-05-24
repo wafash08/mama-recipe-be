@@ -3,6 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const mainRoutes = require('./src/routes')
 const createHttpError = require('http-errors')
+const cors = require('cors')
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -10,6 +11,7 @@ const PORT = process.env.PORT || 4000
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(morgan("dev"))
+app.use(cors())
 
 
 app.use('/v1', mainRoutes)
