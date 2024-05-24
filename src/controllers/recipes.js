@@ -5,7 +5,23 @@ const prisma = new PrismaClient();
 
 const getRecipes = async (req, res, next) => {
   try {
-    const recipes = await prisma.recipe.findMany();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const sort = req.query.sort || "created_at";
+    const sortBy = req.query.sortBy || "DESC";
+    const search = req.query.search || "";
+    const offset = (page - 1) * limit;
+
+    const recipes = await prisma.recipe.findMany({
+        take: limit,
+        skip: offset,
+        ...(search ? {where: {
+            title:{
+                contains: search
+            }
+        }}:{})
+        
+    });
     response(res, recipes, 200, "get all recipe success");
   } catch (error) {
     console.log(error);
