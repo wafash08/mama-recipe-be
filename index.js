@@ -3,15 +3,27 @@ const express = require('express')
 const morgan = require('morgan')
 const mainRoutes = require('./src/routes')
 const createHttpError = require('http-errors')
+const cookieParser = require("cookie-parser");
 const cors = require('cors')
 
 const app = express()
 const PORT = process.env.PORT || 4000
+const corsOrigin = 
+[
+  "http://localhost:3000",
+  "http://localhost:5173",
+]
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 app.use(morgan("dev"))
-app.use(cors())
+app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+    origin: corsOrigin,
+  })
+);
 
 
 app.use('/v1', mainRoutes)

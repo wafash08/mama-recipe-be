@@ -15,7 +15,7 @@ const login = async(req, res, next)=>{
             }
         })
         if(!user){
-            next(createHttpError(403, 'Email or Password is incorrect'))
+            return next(createHttpError(403, 'Email or Password is incorrect'))
         }
         const validPassword = bcrypt.compareSync(password, user.password)
         if(!validPassword){
@@ -28,6 +28,13 @@ const login = async(req, res, next)=>{
         }
         user.token = generateToken(payload);
         user.refreshToken = gerateRefreshToken(payload);
+        res.cookie("token", user.token, {
+            httpOnly: true,
+            maxAge: 60 * 1000 * 60 * 12,
+            secure: false,
+            path: "/",
+            sameSite: "Lax",
+          });
         response(res, user, 201, 'User success Login')
 
     } catch (error) {
