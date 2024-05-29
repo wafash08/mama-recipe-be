@@ -3,10 +3,12 @@ const route = express.Router()
 const recipeRoute = require('./recipes')
 const authRoute = require('./auth')
 const userRoute = require('./users')
+const uploadRoute = require('./upload')
 
 route
     .use('/recipes', recipeRoute)
     .use('/auth', authRoute)
     .use('/users', userRoute)
+    .use('/upload', uploadRoute)
 
 module.exports = route
