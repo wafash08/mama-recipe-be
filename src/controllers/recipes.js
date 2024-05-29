@@ -27,6 +27,9 @@ const getRecipes = async (req, res, next) => {
             },
           }
         : {}),
+      orderBy:{
+        [sort]:sortBy
+      }
     });
     response(res, recipes, 200, "get all recipe success");
   } catch (error) {
