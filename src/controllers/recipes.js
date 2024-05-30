@@ -27,9 +27,9 @@ const getRecipes = async (req, res, next) => {
             },
           }
         : {}),
-      orderBy:{
-        [sort]:sortBy
-      }
+      orderBy: {
+        [sort]: sortBy,
+      },
     });
     response(res, recipes, 200, "get all recipe success");
   } catch (error) {
@@ -142,6 +142,176 @@ const deleteRecipe = async (req, res, next) => {
   }
 };
 
+const getAllSaveRecipe = async (req, res, next) => {
+  try {
+    const email = req.decoded.email;
+    const recipe = await prisma.save.findMany({
+      select:{
+        id: true,
+        recipe_id: true,
+        recipe:{
+          select:{
+            id: true,
+            title: true,
+            description:true,
+            image: true,
+            author_id: true,
+            created_at: true,
+            updated_at: true,
+            author:{
+              select:{
+                name: true,
+              }
+            }
+          }
+        }
+      },
+      where: {
+        user: {
+          email: email,
+        },
+      },
+    });
+    response(res, recipe, 200, "get all save recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+
+const saveRecipe = async (req, res, next) => {
+  try {
+    const { recipe_id } = req.body;
+    const email = req.decoded.email;
+    
+    const saveRecipe = await prisma.save.findFirst({
+      where:{
+        recipe_id,
+        user:{
+          email,
+        }
+      }
+    })
+    if(saveRecipe){
+      return  response(res, null, 401, "you've already save it ");
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    const recipe = await prisma.save.create({
+      data: {
+        recipe_id,
+        user_id: user.id,
+      },
+    });
+    response(res, recipe, 201, "save recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+const removeRecipeSave = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await prisma.save.delete({
+      where: {
+        id,
+      }
+    });
+    response(res, result, 201, "remove save recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+
+const getAllLikeRecipe = async (req, res, next) => {
+  try {
+    const email = req.decoded.email;
+    const recipe = await prisma.like.findMany({
+      select:{
+        id: true,
+        recipe_id: true,
+        recipe:{
+          select:{
+            id: true,
+            title: true,
+            description:true,
+            image: true,
+            author_id: true,
+            created_at: true,
+            updated_at: true,
+            author:{
+              select:{
+                name: true,
+              }
+            }
+          }
+        }
+      },
+      where: {
+        user: {
+          email: email,
+        },
+      },
+    });
+    response(res, recipe, 200, "get all like recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+
+const likeRecipe = async (req, res, next) => {
+  try {
+    const { recipe_id } = req.body;
+    const email = req.decoded.email;
+    const likeRecipe = await prisma.like.findFirst({
+      where:{
+        recipe_id,
+        user:{
+          email,
+        }
+      }
+    })
+    if(likeRecipe){
+      return  response(res, null, 401, "you've already liked it ");
+    }
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    const recipe = await prisma.like.create({
+      data: {
+        recipe_id,
+        user_id: user.id,
+      },
+    });
+    response(res, recipe, 201, "like recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+const removeRecipeLike = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const result = await prisma.like.delete({
+      where: {
+        id,
+      }
+    });
+    response(res, result, 201, "remove like recipe success");
+  } catch (error) {
+    console.log(error);
+    next(new createHttpError.InternalServerError());
+  }
+};
+
 module.exports = {
   getRecipes,
   getRecipesById,
@@ -149,4 +319,10 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
   getAllMyRecipe,
+  getAllSaveRecipe,
+  saveRecipe,
+  removeRecipeSave,
+  getAllLikeRecipe,
+  likeRecipe,
+  removeRecipeLike
 };

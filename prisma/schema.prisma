@@ -22,6 +22,9 @@ model User {
   created_at  DateTime  @db.Timestamp() @default(now())
   updated_at  DateTime? @db.Timestamp()
   recipes     Recipe[]
+  saves       Save[]
+  likes       Like[]
+ 
 }
 
 model Recipe {
@@ -33,5 +36,22 @@ model Recipe {
   author_id     String
   created_at    DateTime  @db.Timestamp() @default(now())
   updated_at    DateTime? @db.Timestamp()
+  saves         Save[]
+  likes         Like[]
 }
 
+model Save{
+  id          String @id @default(uuid())
+  recipe_id   String
+  recipe      Recipe @relation(fields: [recipe_id], references: [id])
+  user_id     String
+  user        User @relation(fields: [user_id], references: [id])
+}
+
+model Like{
+  id          String @id @default(uuid())
+  recipe_id   String
+  recipe      Recipe @relation(fields: [recipe_id], references: [id])
+  user_id     String
+  user        User @relation(fields: [user_id], references: [id])
+}
