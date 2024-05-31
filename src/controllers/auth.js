@@ -73,7 +73,7 @@ const register = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   res.clearCookie("token");
-  commonHelper.response(res, null, 200, "Logout Success");
+  response(res, null, 200, "Logout Success");
 };
 
 module.exports = {
