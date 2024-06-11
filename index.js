@@ -12,7 +12,8 @@ const corsOrigin =
 [
   "http://localhost:3000",
   "http://localhost:5173",
-  "https://mamarecipe-fe-naufan.vercel.app"
+  "https://mamarecipe-fe-naufan.vercel.app",
+  "https://mama-recipe-food.vercel.app"
 ]
 
 app.use(express.json())
